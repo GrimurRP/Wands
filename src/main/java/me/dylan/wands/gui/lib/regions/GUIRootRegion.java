@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -79,6 +81,10 @@ public class GUIRootRegion extends GUIRegion {
             return false;
 
         return observerMap.notifyObservers(slot, from, to, view);
+    }
+
+    public Collection<GUIRegion> viewAllRegions() {
+        return Collections.unmodifiableCollection(regionMap.viewAllRegions());
     }
 
     @Override

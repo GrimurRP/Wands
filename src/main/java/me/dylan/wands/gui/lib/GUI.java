@@ -26,6 +26,10 @@ public class GUI implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    public Plugin getOwningPlugin() {
+        return plugin;
+    }
+
     public void openFor(Player player) {
         showPage(rootPage, player);
     }

@@ -41,6 +41,18 @@ public class GUIDynamicRegion extends GUIRegion {
     }
 
     @Override
+    public GUIDynamicRegion setProtected(boolean isProtected) {
+        super.setProtected(isProtected);
+        return this;
+    }
+
+    @Override
+    public GUIDynamicRegion setItem(ItemStack item) {
+        super.setItem(item);
+        return this;
+    }
+
+    @Override
     public GUIRegion addRegion(int x, int y, int width, int height) {
         throw new UnsupportedOperationException("New region can't overlap a dynamic region");
     }

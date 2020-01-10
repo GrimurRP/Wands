@@ -84,12 +84,16 @@ public class GUIRegionMap implements Iterable<GUIRegion> {
         return (wrapper == null) ? null : wrapper.region;
     }
 
+    public Collection<GUIRegion> viewAllRegions() {
+        return (uniqueRegions == null) ? Collections.emptyList() : Collections.unmodifiableCollection(uniqueRegions.values());
+    }
+
     public List<GUIDynamicRegion> viewDynamicRegions() {
         return (dynamicRegions == null) ? Collections.emptyList() : Collections.unmodifiableList(dynamicRegions);
     }
 
     private void checkInBounds(int x, int y) {
-        if (x < 0 || y < 0 || x >= width || y >= height)
+        if (x < 0 || y < 0 || x > width || y > height)
             throw new IllegalArgumentException("Region out of bounds");
     }
 

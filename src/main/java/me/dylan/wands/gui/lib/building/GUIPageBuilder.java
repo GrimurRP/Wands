@@ -4,6 +4,7 @@ import me.dylan.wands.gui.lib.GUIPage;
 import me.dylan.wands.gui.lib.regions.GUIRegion;
 import me.dylan.wands.gui.lib.regions.GUIRegionType;
 import me.dylan.wands.gui.lib.regions.GUIRootRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 
 import java.util.EnumMap;
@@ -21,14 +22,6 @@ public class GUIPageBuilder {
         this.regions = new EnumMap<>(GUIRegionType.class);
     }
 
-    /*
-    - Dynamic content filling?
-    - GUIPageBuilder.build()?
-    - Specialization for chest GUIs? (GUIChestPageBuilder?)
-    - Handling InventoryClickEvent?
-    - Restoration of previous state(s)?
-     */
-
     public GUIRegion addRegion(GUIRegionType slotType, int x, int y, int width, int height) {
         GUIRegion region = getOrCreateRegion(slotType);
         return region.addRegion(x, y, width, height);
@@ -39,7 +32,7 @@ public class GUIPageBuilder {
     }
 
     public GUIPage build() {
-        return null;
+        return new GUIPage(this.regions, p -> Bukkit.createInventory(p, type, name));
     }
 
 }

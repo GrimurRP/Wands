@@ -1,5 +1,6 @@
 package me.dylan.wands.gui.lib.views;
 
+import me.dylan.wands.WandsPlugin;
 import me.dylan.wands.gui.lib.GUIPage;
 import me.dylan.wands.gui.lib.GUIState;
 import me.dylan.wands.gui.lib.ItemPickupProtection;
@@ -7,6 +8,7 @@ import me.dylan.wands.gui.lib.actions.GUIClickAction;
 import me.dylan.wands.gui.lib.regions.GUIRegion;
 import me.dylan.wands.gui.lib.regions.GUIRegionType;
 import me.dylan.wands.gui.lib.regions.GUIRootRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -36,6 +38,8 @@ public class GUIPageView {
         this.page = page;
         this.player = player;
         this.regions = regions;
+
+        this.inventory = page.getWindowProvider().createWindow(player);
     }
 
     public GUIRegionView getRegionView(GUIRegionType slotType) {
@@ -51,10 +55,10 @@ public class GUIPageView {
     }
 
     public void drawRegion(GUIRegion region) {
-        drawRegion(region, true);
+        Bukkit.getScheduler().runTask(WandsPlugin.getInstance(), () -> drawRegion(region, true));
     }
 
-    public void drawRegion(GUIRegion region, boolean updateDynamic) {
+    private void drawRegion(GUIRegion region, boolean updateDynamic) {
         GUIRootRegion root = region.getRootRegion();
         if (root == null)
             throw new IllegalArgumentException("Can't draw rootless region!");

@@ -61,7 +61,9 @@ public class WandsGUI {
                     return true;
                 });
 
-        GUIRegion wandRegion = rootRegion.addDynamicRegion(1, 0, 8, 3)
+        GUIRegion wandRegion = rootRegion.addDynamicRegion(2, 0, 7, 3)
+                .setProtected(true)
+                .setItem(null)
                 .setContentProvider(GUIContentProvider.of(WandsGUI::listSpells, (region, item, player) -> {
                     player.sendMessage("Clicked " + item.getItemMeta().getDisplayName());
                     return true;

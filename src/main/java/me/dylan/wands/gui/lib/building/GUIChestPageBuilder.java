@@ -2,7 +2,12 @@ package me.dylan.wands.gui.lib.building;
 
 import me.dylan.wands.gui.lib.GUIPage;
 import me.dylan.wands.gui.lib.regions.GUIRegion;
+import me.dylan.wands.gui.lib.regions.GUIRegionType;
 import me.dylan.wands.gui.lib.regions.GUIRootRegion;
+import org.bukkit.Bukkit;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class GUIChestPageBuilder {
     private final String name;
@@ -31,16 +36,23 @@ public class GUIChestPageBuilder {
 
     public GUIPage build() {
         GUIRootRegion region = shrinkToFit();
-        return null;
+        Map<GUIRegionType, GUIRootRegion> regions = Collections.singletonMap(GUIRegionType.CHEST_CONTENTS, region);
+
+        return new GUIPage(regions, p -> Bukkit.createInventory(p, 9 * region.getHeight(), name));
     }
 
     private GUIRootRegion shrinkToFit() {
         int rowCount = maxHeight;
         if (rowCount == -1) { // no addRegion() calls done
-            rowCount = 3;
+
+        }
+        if (rowCount > 6) {
+            rowCount = 6;
         }
 
-        return GUIRootRegion.makeResizedShallowCopy(region, region.getWidth(), rowCount);
+        System.out.println("maxHeight: " + maxHeight + ", rowCount: " + rowCount);
+
+        return region;//GUIRootRegion.makeResizedShallowCopy(region, region.getWidth(), rowCount);
     }
 
 }

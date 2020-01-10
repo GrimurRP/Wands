@@ -1,6 +1,5 @@
 package me.dylan.wands.gui.lib;
 
-import me.dylan.wands.gui.lib.observers.GUIObserverMap;
 import me.dylan.wands.gui.lib.regions.GUIRegion;
 import me.dylan.wands.gui.lib.regions.GUIRegionType;
 import me.dylan.wands.gui.lib.regions.GUIRootRegion;
@@ -10,22 +9,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
 public final class GUIPage {
     private final Map<GUIRegionType, GUIRootRegion> regions;
-    private final GUIObserverMap observerMap;
-    private final GUI gui;
+    private final GUIWindowProvider windowProvider;
 
-    GUIPage(GUI gui, GUIObserverMap observerMap, Map<GUIRegionType, GUIRootRegion> regions) {
-        this.gui = gui;
-        this.observerMap = observerMap;
-        this.regions = new IdentityHashMap<>(regions);
+    public GUIPage(Map<GUIRegionType, GUIRootRegion> regions, GUIWindowProvider windowProvider) {
+        if (regions != null)
+            this.regions = new IdentityHashMap<>(regions);
+        else
+            this.regions = Collections.emptyMap();
+
+        this.windowProvider = windowProvider;
     }
 
-    public void openFor(Player player) {
-        gui.showPage(this, player);
+    public GUIWindowProvider getWindowProvider() {
+        return windowProvider;
     }
 
     public GUIPageView createView(Player player) {

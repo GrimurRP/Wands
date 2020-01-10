@@ -4,6 +4,7 @@ import me.dylan.wands.PreSetItem;
 import me.dylan.wands.WandsPlugin;
 import me.dylan.wands.commandhandler.BaseCommand;
 import me.dylan.wands.config.ConfigHandler;
+import me.dylan.wands.gui.WandsGUI;
 import me.dylan.wands.spell.SpellCompound;
 import me.dylan.wands.spell.SpellType;
 import me.dylan.wands.spell.spellbuilders.Behavior;
@@ -33,6 +34,11 @@ public class Wands extends BaseCommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         switch (args.length) {
+            case 0:
+                if (isPlayer(sender)) {
+                    WandsGUI.showTo((Player) sender);
+                }
+                return true;
             case 1:
                 switch (args[0]) {
                     case "inspect":

@@ -10,6 +10,7 @@ import me.dylan.wands.config.Config;
 import me.dylan.wands.config.ConfigHandler;
 import me.dylan.wands.customitems.AssassinDagger;
 import me.dylan.wands.customitems.CursedBow;
+import me.dylan.wands.gui.lib.ItemPickupProtection;
 import me.dylan.wands.spell.CooldownManager;
 import me.dylan.wands.spell.PlayerListener;
 import org.bukkit.Bukkit;
@@ -72,6 +73,8 @@ public final class WandsPlugin extends JavaPlugin {
         loadListeners(listenerRegistry);
         loadCommands();
         log("Enabled successfully");
+
+        ItemPickupProtection.enable(this);
     }
 
     @Override
