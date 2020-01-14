@@ -13,6 +13,11 @@ public class GUIRegionView {
         this.region = region;
     }
 
+    public GUIRegionView getRootView() {
+        GUIRegion root = region.getRootRegion();
+        return root == null ? null : new GUIRegionView(this.page, root);
+    }
+
     public GUIRegionType getRegionType() {
         GUIRootRegion root = region.getRootRegion();
         return (root == null) ? null : root.getRegionType();

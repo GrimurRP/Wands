@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -19,9 +20,12 @@ public class GUI implements Listener {
 
     private GUIPage rootPage;
 
+    private boolean ignoreCloseEvent = true;
+
     public GUI(Plugin plugin, GUIPage rootPage) {
         this.plugin = plugin;
         this.sessions = new HashMap<>();
+        this.rootPage = rootPage;
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -31,16 +35,18 @@ public class GUI implements Listener {
     }
 
     public void openFor(Player player) {
-        showPage(rootPage, player);
+        openPage(rootPage, player);
     }
 
-    void showPage(GUIPage page, Player player) {
+    public void openPage(GUIPage page, Player player) {
         GUIPageView view = page.createView(player);
 
         GUISession session = sessions.computeIfAbsent(player, k -> new GUISession(player));
         GUIPageView previousView = session.getCurrentView();
-        if (previousView != null)
+        if (previousView != null) {
+            ignoreCloseEvent = true; // An inventory page was open: don't unregister everything when the close event fires for that
             previousView.restoreState();
+        }
 
         session.setCurrentPage(view);
         view.drawAll();
@@ -63,11 +69,21 @@ public class GUI implements Listener {
 
     @EventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
-        GUISession session = sessions.get(event.getPlayer());
+        Player player = (Player) event.getPlayer();
+        GUISession session = sessions.get(player);
+        if (session == null)
+            return;
 
         GUIPageView view = session.getCurrentView();
         if (view != null)
             view.restoreState();
+
+        if (ignoreCloseEvent) {
+            ignoreCloseEvent = false;
+            return;
+        }
+
+        sessions.remove(player);
     }
 
     @EventHandler
@@ -85,8 +101,25 @@ public class GUI implements Listener {
         if (view == null)
             return;
 
-        view.getPage().onClick(bukkitEvent, session);
+        view.getPage().onClick(bukkitEvent, this, session);
     }
 
+    @EventHandler
+    private void onItemDrag(InventoryDragEvent event) {
+        Player player = (Player) event.getWhoClicked();
+
+        GUISession session = sessions.get(player);
+        if (session != null) {
+            handleDragEvent(session, event);
+        }
+    }
+
+    private void handleDragEvent(GUISession session, InventoryDragEvent event) {
+        GUIPageView view = session.getCurrentView();
+        if (view == null)
+            return;
+
+        view.getPage().onDrag(event, this, session);
+    }
 
 }

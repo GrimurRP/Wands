@@ -39,7 +39,7 @@ public class GUISession {
     }
 
     public GUIPageView getCurrentView() {
-        return this.currentPage.view;
+        return (currentPage == null) ? null : currentPage.view;
     }
 
     public GUIDataStore getLocalData() {
@@ -60,7 +60,9 @@ public class GUISession {
         if (last != null && last.view == page) {
             currentPage = history.remove();
         } else {
-            history.add(currentPage);
+            if (currentPage != null)
+                history.add(currentPage);
+
             currentPage = new PageAndData(page);
         }
     }

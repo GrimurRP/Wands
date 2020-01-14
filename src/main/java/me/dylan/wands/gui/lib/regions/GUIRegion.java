@@ -3,6 +3,7 @@ package me.dylan.wands.gui.lib.regions;
 import me.dylan.wands.gui.lib.GUISlot;
 import me.dylan.wands.gui.lib.actions.GUIClickAction;
 import me.dylan.wands.gui.lib.regions.dynamic.GUIDynamicRegion;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
@@ -29,7 +30,6 @@ public class GUIRegion {
         if (parent != null) { // Inherit default values
             this.setProtected(parent.isProtected());
             this.setItem(parent.getItem());
-            this.setAction(parent.getAction());
         }
     }
 
@@ -51,6 +51,10 @@ public class GUIRegion {
 
     public GUIRootRegion getRootRegion() {
         return (parent == null) ? null : parent.getRootRegion();
+    }
+
+    public boolean containsSlot(int x, int y) {
+        return parent.containsSlot(this.x + x, this.y + y);
     }
 
     public GUIRegion setProtected(boolean isProtected) {
@@ -103,6 +107,19 @@ public class GUIRegion {
                 consumer.accept(slot, item);
             }
         }
+    }
+
+    public int getRootX(int localX) {
+        return (parent == null) ? localX : parent.getRootX(this.x + localX);
+    }
+
+    public int getRootY(int localY) {
+        return (parent == null) ? localY : parent.getRootY(this.y + localY);
+    }
+
+    @Override
+    public String toString() {
+        return "GUIRegion{ x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + ", hasParent=" + (parent != null) + ", protected=" + isProtected + "}";
     }
 
     public static GUIRegion createRegion(GUIRegion parent, int x, int y, int width, int height) {

@@ -1,6 +1,7 @@
 package me.dylan.wands.gui.lib.regions;
 
 import me.dylan.wands.gui.lib.regions.dynamic.GUIDynamicRegion;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -41,8 +42,10 @@ public class GUIRegionMap implements Iterable<GUIRegion> {
         int x1 = region.getX(), x2 = x1 + region.getWidth();
         int y1 = region.getY(), y2 = y1 + region.getHeight();
 
-        if (x1 == x2 && y1 == y2)
+        if (x1 == x2 && y1 == y2) {
+            Bukkit.broadcastMessage("Cancelling addRegion(): zero area!");
             return;
+        }
 
         checkInBounds(x1, y1);
         checkInBounds(x2, y2);
@@ -74,6 +77,7 @@ public class GUIRegionMap implements Iterable<GUIRegion> {
     public GUIRegion getRegionFromSlot(int slot) {
         int x = slot % width;
         int y = slot / width;
+
         return getRegionAt(x, y);
     }
 

@@ -6,7 +6,7 @@ import java.util.*;
 
 public enum GUIRegionType {
     // @formatter:off
-    CHEST_CONTENTS(InventoryType.CHEST,         0,      17,     3), // 9x3
+    CHEST_CONTENTS(InventoryType.CHEST,         0,      53,     3), // 9x6
 
     PLAYER_ARMOR(InventoryType.PLAYER,          36,     39,     4),
     PLAYER_HOTBAR(InventoryType.PLAYER,         0,      8,      9),
@@ -66,7 +66,7 @@ public enum GUIRegionType {
     }
 
     public boolean containsSlot(int slot) {
-        return firstSlot >= slot && lastSlot <= slot;
+        return slot >= firstSlot && slot <= lastSlot;
     }
 
     public InventoryType getInventoryType() {

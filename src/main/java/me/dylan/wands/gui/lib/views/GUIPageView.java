@@ -16,10 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 // A per-player page view handler
@@ -48,6 +45,14 @@ public class GUIPageView {
             throw new IllegalArgumentException("Attempted to view a non-existing region: '" + slotType.name() + "'");
 
         return new GUIRegionView(this, region);
+    }
+
+    public ItemStack getItem(int slot) {
+        return inventory.getItem(slot);
+    }
+
+    public void setItem(int slot, ItemStack item) {
+        this.inventory.setItem(slot, item);
     }
 
     public void drawAll() {
@@ -91,8 +96,15 @@ public class GUIPageView {
         GUIRegionView view = new GUIRegionView(this, region);
         GUIRootRegion root = region.getRootRegion();
 
+        Set<Integer> visited = new HashSet<>();
+
         root.getDynamicContents(view, player, (slot, button) -> {
+            visited.add(slot);
             consumer.accept(slot, button.getItem());
+
+            if (button.getAction() == null)
+                return;
+
             dynamicButtons.computeIfAbsent(root.getRegionType(), k -> new HashMap<>())
                     .put(slot, button.getAction());
         });

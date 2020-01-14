@@ -1,18 +1,17 @@
 package me.dylan.wands.gui.lib.regions;
 
 import me.dylan.wands.gui.lib.GUISlot;
+import me.dylan.wands.gui.lib.actions.GUIClickAction;
 import me.dylan.wands.gui.lib.building.GUIDynamicButton;
 import me.dylan.wands.gui.lib.observers.GUIObserverMap;
 import me.dylan.wands.gui.lib.observers.GUISlotObserver;
 import me.dylan.wands.gui.lib.regions.dynamic.GUIDynamicRegion;
 import me.dylan.wands.gui.lib.views.GUIRegionView;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class GUIRootRegion extends GUIRegion {
@@ -30,6 +29,7 @@ public class GUIRootRegion extends GUIRegion {
         return new GUISlot(this, slot);
     }
 
+    @Override
     public GUISlot getSlot(int x, int y) {
         return new GUISlot(this, x, y);
     }
@@ -37,6 +37,34 @@ public class GUIRootRegion extends GUIRegion {
     @Override
     public int getGUISlot(int x, int y) {
         return regionType.getFirstSlot() + (x + y * width);
+    }
+
+    @Override
+    public boolean containsSlot(int x, int y) {
+        return x >= 0 && y >= 0 && x < width && y < height;
+    }
+
+    public boolean containsSlot(int slot) {
+        int unmapped = slot - this.regionType.getFirstSlot();
+        return unmapped >= 0 && unmapped < width*height;
+    }
+
+    @Override
+    public GUIRootRegion setProtected(boolean isProtected) {
+        super.setProtected(isProtected);
+        return this;
+    }
+
+    @Override
+    public GUIRootRegion setItem(ItemStack item) {
+        super.setItem(item);
+        return this;
+    }
+
+    @Override
+    public GUIRootRegion setAction(GUIClickAction action) {
+        super.setAction(action);
+        return this;
     }
 
     public GUIRegion getRegionAtSlot(int slot) {
@@ -111,18 +139,41 @@ public class GUIRootRegion extends GUIRegion {
         List<GUIDynamicButton> allButtons = new ArrayList<>();
         for (GUIDynamicRegion region : regionMap.viewDynamicRegions()) {
             List<GUIDynamicButton> buttons = region.getContentProvider().getContents(view, player);
-
             allButtons.addAll(buttons);
 
+            Set<Integer> visited = new HashSet<>();
+
+            int maxItems = region.width * region.height;
+
             int row = 0, column = 0;
+            int items = 0;
             for (GUIDynamicButton button : buttons) {
                 int slot = region.getGUISlot(column, row);
                 consumer.accept(slot, button);
 
+                visited.add(slot);
+
+                if (++items == maxItems)
+                    break;
+
                 column += 1;
-                if (column > region.getWidth()) {
+                if (column >= region.getWidth()) {
                     column = 0;
                     row += 1;
+                }
+            }
+            // Fill the rest with empty items
+
+            GUIDynamicButton nullButton = new GUIDynamicButton(region.getItem(), null);
+
+            int first = region.getGUISlot(0, 0);
+            for (int i = 0; i < region.width; ++i) {
+                for (int j = 0; j < region.height; ++j) {
+                    int slot = first + (i + j * this.width);
+                    if (visited.contains(slot))
+                        continue;
+
+                    consumer.accept(slot, nullButton);
                 }
             }
             // TODO PAGINATION
@@ -152,19 +203,6 @@ public class GUIRootRegion extends GUIRegion {
             observerMap = new GUIObserverMap(width, height);
 
         return observerMap;
-    }
-
-    public static GUIRootRegion makeResizedShallowCopy(GUIRootRegion old, int newWidth, int newHeight) {
-        GUIRootRegion newRegion = new GUIRootRegion(old.regionType, newWidth, newHeight);
-
-        if (old.regionMap != null) {
-            GUIRegionMap newRegionMap = newRegion.getOrCreateRegionMap();
-            for (GUIRegion region : old.regionMap) {
-                newRegionMap.addRegion(region);
-            }
-        }
-
-        return newRegion;
     }
 
 }

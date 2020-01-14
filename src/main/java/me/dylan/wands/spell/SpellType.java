@@ -3,6 +3,7 @@ package me.dylan.wands.spell;
 import me.dylan.wands.WandsPlugin;
 import me.dylan.wands.spell.spellbuilders.Behavior;
 import me.dylan.wands.spell.spells.*;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,11 +77,13 @@ public enum SpellType {
     public final Behavior behavior;
     public final String name;
     public final int id;
+    public final Material material;
 
     SpellType(int id, @NotNull Castable castable) {
         this.id = id;
         this.behavior = castable.createBehaviour();
         this.name = castable.getDisplayName();
+        this.material = castable.getMaterial();
     }
 
     @Nullable
